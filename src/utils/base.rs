@@ -2,7 +2,6 @@ use chrono::prelude::*;
 use once_cell::sync::Lazy;
 use std::time::Duration;
 
-use crate::advent_of_code_2023::days as days_2023;
 use crate::advent_of_code_2024::days as days_2024;
 
 pub static CURRENT_YEAR: Lazy<u16> = Lazy::new(|| Utc::now().year() as u16);
@@ -29,20 +28,24 @@ pub fn read_file_to_str(dir: &str) -> String {
     }
 }
 
-pub fn run_solutions(year: u16, day: u8, input: &String) -> Option<((u32, Duration), (u32, Duration))> {
+pub fn run_solutions(year: u16, day: u8, input: &String) -> Option<(Option<(u32, Duration)>, Option<(u32, Duration)>)> {
     match year {
-        2023 => match day {
-            _ => None
-        },
         2024 => match day {
+            1 => Some((
+                time_solution(days_2024::day_01::one::run, input),
+                time_solution(days_2024::day_01::two::run, input)
+            )),
             _ => None
-        },
+        }
         _ => None
     }
 }
 
-pub fn time_solution(solution_fn: fn(&String) -> u32, input: &String) -> (u32, std::time::Duration) {
+pub fn time_solution(solution_fn: fn(&String) -> u32, input: &String) -> Option<(u32, std::time::Duration)> {
     let start_time = std::time::Instant::now();
-    let solution: u32 = solution_fn(input);
-    (solution, start_time.elapsed())
+    let result = std::panic::catch_unwind(|| solution_fn(input));
+    match result {
+        Ok(solution) => Some((solution, start_time.elapsed())),
+        Err(_) => None
+    }
 }

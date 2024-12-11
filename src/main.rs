@@ -1,7 +1,6 @@
 use clap::{Arg, ArgAction, Command};
-use std::{path::Path, time::Duration};
+use std::path::Path;
 
-mod advent_of_code_2023;
 mod advent_of_code_2024;
 
 mod utils;
@@ -19,7 +18,7 @@ fn main() {
         .arg(
             Arg::new("test")
                 .short('t')
-                .help("Use test input (./advent_of_code_{year}/src/test inputs/day_{day_num}")
+                .help("Use test input (src\\advent_of_code_{year}\\test inputs\\day_{day_num}")
                 .action(ArgAction::SetTrue)
         )
         .get_matches();
@@ -28,8 +27,7 @@ fn main() {
     let use_test = matches.get_flag("test");
 
     match inputs.len() {
-        1 => {
-            print!("1");
+        1 => { 
             let day: u8 = inputs.get(0).unwrap()
                 .parse()
                 .expect("Day must be a valid number (1-25)");
@@ -37,7 +35,6 @@ fn main() {
             run_day(*utils::base::CURRENT_YEAR, day, use_test);
         }
         2 => {
-            print!("2");
             let year: u16 = inputs.get(0).unwrap()
                 .parse()
                 .expect(format!("Year must be a valid number (2015-{})", *utils::base::CURRENT_YEAR).as_str());
@@ -56,8 +53,8 @@ fn run_day(year: u16, day: u8, use_test: bool) {
     let year_str: String = utils::base::get_year_str(year);
     let day_str: String = utils::base::get_day_str(day);
     
-    let year_dir: String = format!("/src/advent_of_code_{}", year_str);
-    let day_dir: String = format!("{}/days/day_{}", year_dir, day_str);
+    let year_dir: String = format!("src\\advent_of_code_{}", year_str);
+    let day_dir: String = format!("{}\\days\\day_{}", year_dir, day_str);
 
     // check for validity
     let mut invalid: bool = false;
@@ -88,8 +85,8 @@ fn run_day(year: u16, day: u8, use_test: bool) {
     if invalid { std::process::exit(1); }
 
     let input_dir: String = format!(
-        "/advent_of_code_{}/{}/day_{}",
-        year_str,
+        "{}\\{}\\day_{}.txt",
+        year_dir,
         if !use_test { "inputs" } else { "test inputs" },
         day_str
     );
@@ -98,8 +95,15 @@ fn run_day(year: u16, day: u8, use_test: bool) {
 
     println!("Running Advent of Code {} day {}...", year, day);
 
-    if let Some(((sol_one, dur_one), (sol_two, dur_two))) = utils::base::run_solutions(year, day, &input) {
-        println!("Part one: {}, ran in {:?}\nPart two: {}, ran in {:?}", sol_one, dur_one, sol_two, dur_two);
+    if let Some((run_data_one, run_data_two)) = utils::base::run_solutions(year, day, &input) {
+        if let Some((sol_one, dur_one)) = run_data_one {
+            println!("Part one: {}, ran in {:?}", sol_one, dur_one);
+        }
+
+        if let Some((sol_two, dur_two)) = run_data_two {
+            println!("Part two: {}, ran in {:?}", sol_two, dur_two);
+        }
+        
         std::process::exit(0);
     } else {
         eprintln!("Runner file likely damaged");
