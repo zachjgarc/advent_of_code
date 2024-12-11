@@ -18,7 +18,7 @@ fn main() {
         .arg(
             Arg::new("test")
                 .short('t')
-                .help("Use test input (src\\advent_of_code_{year}\\test inputs\\day_{day_num}")
+                .help("Use test input (src/advent_of_code_{year}/test inputs/day_{day_num}")
                 .action(ArgAction::SetTrue)
         )
         .get_matches();
@@ -53,8 +53,8 @@ fn run_day(year: u16, day: u8, use_test: bool) {
     let year_str: String = utils::base::get_year_str(year);
     let day_str: String = utils::base::get_day_str(day);
     
-    let year_dir: String = format!("src\\advent_of_code_{}", year_str);
-    let day_dir: String = format!("{}\\days\\day_{}", year_dir, day_str);
+    let year_dir: String = format!("src/advent_of_code_{}", year_str);
+    let day_dir: String = format!("{}/days/day_{}", year_dir, day_str);
 
     // check for validity
     let mut invalid: bool = false;
@@ -85,7 +85,7 @@ fn run_day(year: u16, day: u8, use_test: bool) {
     if invalid { std::process::exit(1); }
 
     let input_dir: String = format!(
-        "{}\\{}\\day_{}.txt",
+        "{}/{}/day_{}.txt",
         year_dir,
         if !use_test { "inputs" } else { "test inputs" },
         day_str

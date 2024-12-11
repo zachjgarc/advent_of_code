@@ -115,11 +115,27 @@ day_str = f"day_{day:02}"
 days_dir = os.path.join(year_dir, "days")
 day_dir = os.path.join(days_dir, day_str)
 inputs_dir = os.path.join(year_dir, "inputs")
+input_path = os.path.join(inputs_dir, f"{day_str}.txt")
 test_inputs_dir = os.path.join(year_dir, "test inputs")
+test_input_path = os.path.join(test_inputs_dir, f"{day_str}.txt")
 
 os.makedirs(day_dir, exist_ok=True)
+
 os.makedirs(inputs_dir, exist_ok=True)
+if os.path.exists(input_path):
+    print(f"{input_path} already exists")
+else:
+    with open(input_path, "w") as f:
+        f.write("")
+    print(f"Created {input_path}")
+
 os.makedirs(test_inputs_dir, exist_ok=True)
+if os.path.exists(test_input_path):
+    print(f"{test_input_path} already exists")
+else:
+    with open(test_input_path, "w") as f:
+        f.write("")
+    print(f"Created {test_input_path}")
 
 
 # create one.rs and two.rs
@@ -146,9 +162,13 @@ pub fn run(_input: &String) -> u32 {
 # create src/advent_of_code_<year>/days/day_<day>/mod.rs
 
 day_mod_path = os.path.join(day_dir, "mod.rs")
+day_mod_file_exists = os.path.exists(day_mod_path)
 with open(day_mod_path, "w") as f:
     f.write("pub mod one;\npub mod two;")
-print(f"Created {day_mod_path}")
+if not day_mod_file_exists:
+    print(f"Created {day_mod_path}")
+else:
+    print(f"Overwrote {day_mod_path}")
 
 
 # update src/advent_of_code_<year>/days/mod.rs
@@ -163,12 +183,16 @@ else:
     with open(days_mod_path, "r") as f:
         lines = f.readlines()
     existing_mods = [line for line in lines if line.startswith("pub mod day_")]
-    if not days_mod_addition in existing_mods:
+    day_mod_declaration_exists = days_mod_addition in existing_mods
+    if not day_mod_declaration_exists:
         existing_mods.append(days_mod_addition)
     existing_mods.sort(key=lambda line: int(line.strip()[-3:-1]))
     with open(days_mod_path, "w") as f:
         f.writelines(existing_mods)
-    print(f"Updated {days_mod_path}")
+    if not day_mod_declaration_exists:
+        print(f"Updated {days_mod_path}")
+    else:
+        print(f"Declaration for mod {day_str} already exists")
 
 
 # update base.rs
@@ -186,10 +210,14 @@ year_matches = {
 }
 
 base_addition = f"{day} => Some((\n                time_solution(days_{year}::{day_str}::one::run, input),\n                time_solution(days_{year}::{day_str}::two::run, input)\n            ))"
-if not year in year_matches.keys():
+year_arm_exists = year in year_matches.keys()
+day_arm_exists = False
+if not year_arm_exists:
     year_matches[year] = [base_addition]
-elif not base_addition in year_matches[year]:
-    year_matches[year].append(base_addition)
+else:
+    day_arm_exists = base_addition in year_matches[year]
+    if not day_arm_exists:
+        year_matches[year].append(base_addition)
 
 sorted_years = sorted(year_matches.keys())
 
@@ -211,3 +239,10 @@ updated_base_rs = re.sub(
     
 with open(base_path, "w") as f:
     f.write(updated_base_rs)
+
+if not year_arm_exists:
+    print(f"Created {year} arm in {base_path}")
+if not day_arm_exists:
+    print(f"Created day {day} sub-arm in {base_path}")
+else:
+    print(f"Day {day} sub-arm already exists in {base_path}")
