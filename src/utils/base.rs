@@ -35,6 +35,18 @@ pub fn run_solutions(year: u16, day: u8, input: &String) -> Option<(Option<(u32,
                 time_solution(days_2024::day_01::one::run, input),
                 time_solution(days_2024::day_01::two::run, input)
             )),
+            2 => Some((
+                time_solution(days_2024::day_02::one::run, input),
+                time_solution(days_2024::day_02::two::run, input)
+            )),
+            3 => Some((
+                time_solution(days_2024::day_03::one::run, input),
+                time_solution(days_2024::day_03::two::run, input)
+            )),
+            4 => Some((
+                time_solution(days_2024::day_04::one::run, input),
+                time_solution(days_2024::day_04::two::run, input)
+            )),
             _ => None
         }
         _ => None
