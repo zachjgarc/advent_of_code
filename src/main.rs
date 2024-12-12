@@ -18,6 +18,7 @@ fn main() {
         .arg(
             Arg::new("test")
                 .short('t')
+                .long("test")
                 .help("Use test input (src/advent_of_code_{year}/test inputs/day_{day_num}")
                 .action(ArgAction::SetTrue)
         )
