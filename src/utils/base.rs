@@ -51,6 +51,10 @@ pub fn run_solutions(year: u16, day: u8, input: &String) -> Option<(Option<(u32,
                 time_solution(days_2024::day_05::one::run, input),
                 time_solution(days_2024::day_05::two::run, input)
             )),
+            6 => Some((
+                time_solution(days_2024::day_06::one::run, input),
+                time_solution(days_2024::day_06::two::run, input)
+            )),
             _ => None
         }
         _ => None
