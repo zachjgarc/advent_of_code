@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use crate::utils::prelude::*;
 
-pub fn run(_input: &String) -> u32 {
+pub fn run(_input: &str) -> u32 {
     let mut counts = HashMap::<u32,(u32,u32)>::new();
 
     for line in _input.lines() {

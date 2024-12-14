@@ -149,7 +149,7 @@ for solution_path in [one_path, two_path]:
 """#[allow(unused_imports)]
 use crate::utils::prelude::*;
 
-pub fn run(_input: &String) -> u32 {
+pub fn run(_input: &str) -> u32 {
     todo!();
 }"""
             )
@@ -209,7 +209,7 @@ year_matches = {
     for year, block in re.findall(year_pattern, base_rs, re.DOTALL)
 }
 
-base_addition = f"{day} => Some((\n                time_solution(days_{year}::{day_str}::one::run, input),\n                time_solution(days_{year}::{day_str}::two::run, input)\n            ))"
+base_addition = f"{day} => Some((\n                get_solution(days_{year}::{day_str}::one::run, input, run_case),\n                get_solution(days_{year}::{day_str}::two::run, input, run_case)\n            ))"
 year_arm_exists = year in year_matches.keys()
 day_arm_exists = False
 if not year_arm_exists:

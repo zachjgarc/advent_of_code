@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use crate::utils::prelude::*;
 
-pub fn run(_input: &String) -> u32 {
+pub fn run(_input: &str) -> u32 {
     let mut input_data = _input.split("\n\n");
     let mut rule_data = HashMap::<u32,HashSet<u32>>::new();
 

@@ -22,10 +22,30 @@ fn main() {
                 .help("Use test input (src/advent_of_code_{year}/test inputs/day_{day_num}")
                 .action(ArgAction::SetTrue)
         )
+        .arg(
+            Arg::new("best")
+                .short('b')
+                .short_alias('f')
+                .long("best")
+                .alias("fast")
+                .help("Runs solution ten times, returns fastest and  times")
+                .action(ArgAction::SetTrue)
+        )
+        .arg(
+            Arg::new("once")
+                .short('o')
+                .long("once")
+                .help("Runs solution once (if running 50 times would take too long)")
+                .action(ArgAction::SetTrue)
+        )
         .get_matches();
 
     let inputs = matches.get_many::<String>("inputs").unwrap().collect::<Vec<_>>();
     let use_test = matches.get_flag("test");
+    let use_best = matches.get_flag("best");
+    let run_once = matches.get_flag("once");
+
+    let run_case: u8 = if !(use_best || run_once) { 0 } else if use_best { 1 } else { 2 };
 
     match inputs.len() {
         1 => { 
@@ -33,7 +53,7 @@ fn main() {
                 .parse()
                 .expect("Day must be a valid number (1-25)");
 
-            run_day(*utils::base::CURRENT_YEAR, day, use_test);
+            run_day(*utils::base::CURRENT_YEAR, day, use_test, run_case);
         }
         2 => {
             let year: u16 = inputs.get(0).unwrap()
@@ -44,13 +64,13 @@ fn main() {
                 .parse()
                 .expect("Day must be a valid number (1-25)");
 
-            run_day(year, day, use_test);
+            run_day(year, day, use_test, run_case);
         }
         _ => unreachable!()
     }
 }
 
-fn run_day(year: u16, day: u8, use_test: bool) {
+fn run_day(year: u16, day: u8, use_test: bool, run_case: u8) {
     let year_str: String = utils::base::get_year_str(year);
     let day_str: String = utils::base::get_day_str(day);
     
@@ -92,11 +112,11 @@ fn run_day(year: u16, day: u8, use_test: bool) {
         day_str
     );
 
-    let input: String = utils::base::read_file_to_str(&input_dir);
+    let input: &str = &utils::base::read_file_to_str(&input_dir);
 
     println!("Running Advent of Code {} day {}...", year, day);
 
-    if let Some((run_data_one, run_data_two)) = utils::base::run_solutions(year, day, &input) {
+    if let Some((run_data_one, run_data_two)) = utils::base::run_solutions(year, day, input, run_case) {
         if let Some((sol_one, dur_one)) = run_data_one {
             println!("Part one: {}, ran in {:?}", sol_one, dur_one);
         }

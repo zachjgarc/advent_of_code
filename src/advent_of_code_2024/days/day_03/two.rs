@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use crate::utils::prelude::*;
 
-pub fn run(_input: &String) -> u32 {
+pub fn run(_input: &str) -> u32 {
     let mut multiply = true;
 
     let re = Regex::new(r"mul\(\d+,\d+\)|(do|don't)\(\)").unwrap();

@@ -28,32 +28,32 @@ pub fn read_file_to_str(dir: &str) -> String {
     }
 }
 
-pub fn run_solutions(year: u16, day: u8, input: &String) -> Option<(Option<(u32, Duration)>, Option<(u32, Duration)>)> {
+pub fn run_solutions(year: u16, day: u8, input: &str, run_case: u8) -> Option<(Option<(u32, Duration)>, Option<(u32, Duration)>)> {
     match year {
         2024 => match day {
             1 => Some((
-                time_solution(days_2024::day_01::one::run, input),
-                time_solution(days_2024::day_01::two::run, input)
+                get_solution(days_2024::day_01::one::run, input, run_case),
+                get_solution(days_2024::day_01::two::run, input, run_case)
             )),
             2 => Some((
-                time_solution(days_2024::day_02::one::run, input),
-                time_solution(days_2024::day_02::two::run, input)
+                get_solution(days_2024::day_02::one::run, input, run_case),
+                get_solution(days_2024::day_02::two::run, input, run_case)
             )),
             3 => Some((
-                time_solution(days_2024::day_03::one::run, input),
-                time_solution(days_2024::day_03::two::run, input)
+                get_solution(days_2024::day_03::one::run, input, run_case),
+                get_solution(days_2024::day_03::two::run, input, run_case)
             )),
             4 => Some((
-                time_solution(days_2024::day_04::one::run, input),
-                time_solution(days_2024::day_04::two::run, input)
+                get_solution(days_2024::day_04::one::run, input, run_case),
+                get_solution(days_2024::day_04::two::run, input, run_case)
             )),
             5 => Some((
-                time_solution(days_2024::day_05::one::run, input),
-                time_solution(days_2024::day_05::two::run, input)
+                get_solution(days_2024::day_05::one::run, input, run_case),
+                get_solution(days_2024::day_05::two::run, input, run_case)
             )),
             6 => Some((
-                time_solution(days_2024::day_06::one::run, input),
-                time_solution(days_2024::day_06::two::run, input)
+                get_solution(days_2024::day_06::one::run, input, run_case),
+                get_solution(days_2024::day_06::two::run, input, run_case)
             )),
             _ => None
         }
@@ -61,11 +61,31 @@ pub fn run_solutions(year: u16, day: u8, input: &String) -> Option<(Option<(u32,
     }
 }
 
-pub fn time_solution(solution_fn: fn(&String) -> u32, input: &String) -> Option<(u32, std::time::Duration)> {
-    let start_time = std::time::Instant::now();
+pub fn get_solution(solution_fn: fn(&str) -> u32, input: &str, run_case: u8) -> Option<(u32, std::time::Duration)> {
+    let mut start_time = std::time::Instant::now();
     let result = std::panic::catch_unwind(|| solution_fn(input));
+    let mut dur = start_time.elapsed();
     match result {
-        Ok(solution) => Some((solution, start_time.elapsed())),
+        Ok(solution) => {
+            if run_case == 2 { return Some((solution, dur)); }
+
+            let mut durations = Vec::<Duration>::new();
+
+            while durations.len() < 50 {
+                start_time = std::time::Instant::now();
+                solution_fn(input); // local var
+                dur = start_time.elapsed();
+                durations.push(dur);
+            }
+
+            if run_case == 0 {
+                return Some((solution, durations.iter().fold(Duration::ZERO, |acc, &dur| acc + dur) / durations.len() as u32));
+            } else if run_case == 1 {
+                return Some((solution, *durations.iter().min().unwrap()));
+            } else {
+                return None;
+            }
+        }
         Err(_) => None
     }
 }
